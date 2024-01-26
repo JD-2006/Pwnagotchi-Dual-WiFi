@@ -19,3 +19,15 @@ your GPS. My module was a four wire version and most others should work the sane
 (the size of a quarter). No need to spend more on Pi specific HATs.
 
 I have tried to add some troubleshooting options but as hardware and software differences are limitless, buyer beware.
+
+Here are some addition repos I have used in this project:
+
+https://github.com/JD-2006/pwnagotchi-Pi-Zero-W-RTC
+
+https://github.com/JD-2006/pwnagotchi-plugins_JD-2006
+
+https://github.com/Howchoo/pi-power-button
+
+Thanks for the inspiration:
+
+https://github.com/unagisan69/pwnagotchi-external-wifi-plugin

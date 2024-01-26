@@ -6,7 +6,8 @@ This is basically my setup notes with a few added comments, since I restarted fr
 My hardware is a Pi Zero W, RTC, A rando GPS module I had laying around from a drone project, A Cable Matters WiFi adapter (Panda),
 A shutdown button scavenged from a old computer case and an extra LED. 
 
-*** Caveats Aplenty ***
+*** Caveats Aplenty *** :dragon:
+
 My OS flavor is https://github.com/jayofelony/pwnagotchi-torch but 'should' work on others.
 
 Some plugins have caused issues or have behaviour that changes files needed for this project. Ones that I know of are

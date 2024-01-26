@@ -7,6 +7,10 @@ This is basically my setup notes with a few added comments, since I restarted fr
 My hardware is a Pi Zero W, RTC, A rando GPS module I had laying around from a drone project, A Cable Matters WiFi adapter (Panda),
 A shutdown button scavenged from a old computer case and an extra LED. 
 
+I used WinSCP as soon as I could ssh in for file manipulation. Ext2Fsd is a driver for windows to be able to read ext2 etc Linux
+volumes so you can plug your sd card into your pc for file transfers also.
+
+
 *** Caveats Aplenty *** :dragon:
 
 My OS flavor is https://github.com/jayofelony/pwnagotchi-torch but 'should' work on others.

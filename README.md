@@ -21,7 +21,7 @@ as any that mess with specific adapter names or the internal wifi module may bre
 
 My GPS module 'just worked' after the steps contained herein. I had problems with GPSD so I do not use it or know how it will afect
 your GPS. My module was a four wire version and most others should work the sane. I would reccommend something like a BN-180 or similiar
-(the size of a quarter). No need to spend more on Pi specific HATs.
+(the size of a quarter). No need to spend more on Pi specific HATs. I enabled the 'GPS' plugin.
 
 I have tried to add some troubleshooting options but as hardware and software differences are limitless, buyer beware.
 

@@ -1,0 +1,372 @@
+`$ sudo su
+# passwd pi
+# passwd root
+exit
+
+$ sudo nano /etc/ssh/sshd_config
+- Change
+PermitRootLogin yes
+
+--- For GPS --------------------------------
+- Use $ sudo raspi-config
+- Interface
+Enable serial, no to login, yes to hardware
+Exit
+Reboot
+
+$ sudo nano /boot/cmdline.txt
+- Change, remove other consoles except
+console=tty1
+
+--------------------------------------------
+
+$ sudo nano /boot/config.txt
+- Add if not listed at bottom
+dtoverlay=miniuart-bt
+
+$ sudo rm /etc/pwnagotchi/config.toml
+
+$ sudo cp /etc/pwnagotchi/default.toml /etc/pwnagotchi/config.toml
+
+ - $ sudo reboot -h now
+
+
+$ sudo apt-get update
+$ sudo apt-get upgrade
+
+$ sudo apt-get install build-essential checkinstall libcurl4-openssl-dev libssh-dev aircrack-ng hcxtools
+$ sudo pip3 install wheel
+
+ - $ sudo reboot -h now
+
+
+$ sudo nano /etc/pwnagotchi/config.toml
+- Change
+bettercap.handshakes = "/home/pi/handshakes"
+
+fs.memory.enabled = true
+fs.memory.mounts.log.enabled = true
+fs.memory.mounts.log.mount = "/var/log"
+fs.memory.mounts.log.size = "50M"
+fs.memory.mounts.log.sync = 60
+fs.memory.mounts.log.zram = false
+fs.memory.mounts.log.rsync = true
+
+fs.memory.mounts.data.enabled = true
+fs.memory.mounts.data.mount = "/var/tmp/pwnagotchi"
+fs.memory.mounts.data.size = "10M"
+fs.memory.mounts.data.sync = 3600
+fs.memory.mounts.data.zram = false
+fs.memory.mounts.data.rsync = true
+
+
+I had problems with a few plugins after the completion of this guide so I reccommend
+disabling them now before proceeding. 
+fix_services, fix_brcmf_plugin
+
+
+--- For GPS --------------------------------
+$ sudo nano /etc/pwnagotchi/config.toml
+- Change
+main.plugins.gps.enabled = true
+main.plugins.gps.speed = 9600
+main.plugins.gps.device = "/dev/ttyAMA0"
+--------------------------------------------
+
+ - $ sudo reboot -h now
+
+
+
+--- For GPS --------------------------------
+- Test with
+cat /dev/ttyAMA0
+
+- If you get NMEA strings, it's all good
+- If not make sure your wiring is correct
+--------------------------------------------
+
+$ sudo systemctl enable bluetooth
+
+$ sudo nano /etc/systemd/system/dbus-org.bluez.service
+- Change
+ExecStart=/usr/lib/bluetooth/bluetoothd --noplugin=sap,a2dp,-C
+
+$ sudo nano /usr/bin/btuart
+- Add the "#" in front of the the first if, else, and fi
+#if grep -q "raspberrypi,4" /proc/device-tree/compatible; then
+  BDADDR=
+#else
+  SERIAL=`cat /proc/device-tree/serial-number | cut -c9-`
+  B1=`echo $SERIAL | cut -c3-4`
+  B2=`echo $SERIAL | cut -c5-6`
+  B3=`echo $SERIAL | cut -c7-8`
+  BDADDR=`printf b8:27:eb:%02x:%02x:%02x $((0x$B1 ^ 0xaa)) $((0x$B2 ^ 0xaa)) $((0x$B3 ^ 0xaa))`
+#fi
+
+ - $ sudo reboot -h now
+
+
+
+You need to be in AUTO mode before pairing.
+Then proceed.
+
+sudo su
+bluetoothctl
+agent on
+default-agent
+pairable on
+discoverable on
+power on
+scan on
+# wait for your device's address to show up then hit ctrl+c to stop
+pair MAC_ADDRESS
+trust MAC_ADDRESS
+connect MAC_ADDRESS
+
+- When complete.
+
+scan off 
+exit
+
+Sometimes need to repeat above steps a few times
+
+- If bluetooth is not auto starting after reboots
+$ sudo nano /etc/rc.local
+- Add to bottom, but above exit 0
+service bluetooth start
+
+Save and exit
+
+ - $ sudo reboot -h now
+
+
+
+It will connect but not show in pwna ui.
+
+If it wont connect consistantly after reboots.
+
+
+- Install bluez-test-scripts:
+$ sudo apt-get install --no-install-recommends bluez-test-scripts
+
+$ sudo cp /usr/share/doc/bluez-test-scripts/examples/bluezutils.py /usr/bin
+$ sudo cp /usr/share/doc/bluez-test-scripts/examples/test-network /usr/bin
+
+- Create a systemd service file:
+$ sudo nano /etc/systemd/system/auto-bt-pan-connect.service
+- Use your phones MAC instead of xx:xx:xx:xx:xx:xx
+
+[Unit]
+Description=Auto PAN Connect Service
+After=usb-gadget.target 
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 test-network xx:xx:xx:xx:xx:xx nap
+WorkingDirectory=/usr/bin
+StandardOutput=inherit
+StandardError=inherit
+Restart=on-failure
+RestartSec=90
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+
+
+- Save and exit.
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl start auto-bt-pan-connect
+$ sudo systemctl status auto-bt-pan-connect
+
+- Ensure that the service is active and running.
+
+- Enable the service to start on boot:
+$ sudo systemctl enable auto-bt-pan-connect
+
+ 
+$ sudo nano /etc/pwnagotchi/config.toml
+- Change
+main.plugins.bt-tether.enabled = true
+
+main.plugins.bt-tether.devices.android-phone.enabled = true
+main.plugins.bt-tether.devices.android-phone.search_order = 1
+main.plugins.bt-tether.devices.android-phone.mac = "PHONE mac"
+main.plugins.bt-tether.devices.android-phone.ip = "192.168.44.45"
+main.plugins.bt-tether.devices.android-phone.netmask = 24
+main.plugins.bt-tether.devices.android-phone.interval = 1
+main.plugins.bt-tether.devices.android-phone.scantime = 10
+main.plugins.bt-tether.devices.android-phone.max_tries = 100
+main.plugins.bt-tether.devices.android-phone.share_internet = true
+main.plugins.bt-tether.devices.android-phone.priority = 1
+
+I set the service to start, restart evert 90 seconds so have tethering on phone running when rebooting pi.
+
+ - $ sudo reboot -h now
+
+
+
+Be sure your Pi connects to your phones tethering before continuing.
+
+
+An attempt to fix WFi dongle from not powering up after boot.
+
+$ sudo nano /boot/config.txt
+- Add the following line at the end of the file:
+dwc_otg.fiq_fix_enable=1
+
+$ sudo nano /boot/cmdline.txt
+- Add the following at the end of the line, before the "rootwait" parameter:
+usbcore.autosuspend=-1
+
+
+I used JuiceSSH to log into Pi after it connected to my BT.
+
+You will probably get frequent disconnects. Patience. :/
+Sometimes it will connect but the IP you put in config.toml wont respond to
+JuiceSSH. Restart both.
+
+
+- Modprobe your external drivers - And check they're not in blacklist /etc/modprobe.d
+$ sudo modprobe rtl8xxxu
+- Check and add to modules if not there /etc/modules
+
+
+*** Connect external adapter ***
+
+
+- After rebooting make sure external adapter is in ifconfig
+
+
+
+$ sudo apt-get install wpasupplicant
+
+
+$ sudo systemctl enable wpa_supplicant.service
+
+$ sudo systemctl enable systemd-networkd.service
+
+$ sudo systemctl enable systemd-network-generator.service
+
+$ sudo systemctl enable systemd-resolved.service
+
+$ sudo systemctl enable nftables.service
+
+- Use your network and password
+$ sudo su
+# wpa_passphrase ssid password > /etc/wpa_supplicant/wpa_supplicant.conf
+exit
+
+- I got a wrong psk generated once :/ spent an hour debugging - There's an online tool to calculte the psk
+
+- Re-add
+$ sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+
+
+        scan_ssid=1
+        key_mgmt=WPA-PSK
+
+- So it looks like this, but with your info:
+
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=US
+
+network={
+        ssid="YOUR WIFI NETWORK NAME"
+        scan_ssid=1
+        #psk="password"
+        psk=
+        key_mgmt=WPA-PSK
+}
+
+- Save and exit.
+
+- Change to use the adapter you want to connect to wifi
+
+$ sudo nano /etc/network/interfaces
+
+auto wlan0
+iface wlan0 inet dhcp
+iface default inet dhcp
+
+- Save
+
+- Unblock the wireless interfaces:
+$ sudo rfkill unblock wifi
+
+
+- We can check this with:
+ifconfig
+
+- Change to use the adapter you want to connect to wifi
+$ sudo dhcpcd wlan1
+
+ - $ sudo reboot -h now
+
+
+
+- Use same adapter as above
+$ sudo wpa_cli -i wlan1 reconfigure
+
+
+- If it does not consistantly connect to wifi try:
+$ sudo nano /etc/systemd/network/25-wlan.network
+[Match]
+Name=wlan1
+
+[Network]
+DHCP=ipv4
+
+
+After a reboot on most ocassions that was enough to get the internal wifi to connect to an access point,
+sometimes some Google-Fu is required. FYI.
+
+- If disconnecting wifi issues:
+$ sudo modprobe brcmfmac roamoff=1 feature_disable=0x82000
+
+
+- Change any 'wlan' reference in these files to your external monitor interface
+
+    '/usr/bin/bettercap-launcher',
+    '/usr/local/share/bettercap/caplets/pwnagotchi-auto.cap',
+    '/usr/local/share/bettercap/caplets/pwnagotchi-manual.cap',
+    '/etc/pwnagotchi/config.toml',
+    '/etc/systemd/system/pwngrid-peer.service',
+
+- Replace all instances of 'brcmfmac' with your external driver
+$ sudo nano /usr/bin/pwnlib
+
+ - $ sudo reboot -h now
+
+
+
+- Check with iwconfig if your exteral is entering monitor mode
+- I had to comment line
+#  iw phy "$(iw phy | head -1 | cut -d" " -f2)" interface add wlan0mon type monitor
+
+- And add
+  airmon-ng start wlan0
+- Like this
+
+  ifconfig wlan0mon up
+  airmon-ng start wlan0
+  iw dev wlan0mon set power_save off
+
+- Change any 'wlan0' and 'wlan0mon' reference to your external monitor interface
+    '/usr/bin/pwnlib',
+
+
+To help possible adapter name switching modify udev.
+Use lowercase letters for your MAC's.
+$ sudo nano /etc/udev/rules.d/21-persistent-local.rules
+KERNEL=="wlan*", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="wlan0"
+KERNEL=="wlan*", ATTR{address}=="xx:xx:xx:xx:xx:xx", NAME="wlan1"
+
+ - $ sudo reboot -h now
+
+
+
+
+Done! Congrats!

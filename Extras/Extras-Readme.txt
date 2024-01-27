@@ -1,7 +1,7 @@
 auto-connect.py -
 This script reads your cracked wifi potfile and adds the AP's to your wpa_supplicant.conf
-file so you will automatically connect. Change potfile location to yours. I have this run once
-after reboot with:
+file so you will automatically connect. Need wpa-sec plugin enabled. Change potfile location to yours.
+I have this run once after reboot with:
 Make the script executable (if not already) by running:
 chmod +x monitor_file.py
 

@@ -8,7 +8,7 @@ chmod +x monitor_file.py
 Open the crontab configuration:
 crontab -e
 
-@reboot /usr/bin/python3 /root/auto-connect.py
+@reboot sudo /usr/bin/python3 /root/auto-connect.py
 
 inky.py - 
 Here is my version of /usr/local/lib/python3.9/dist-packages/pwnagotchi/ui/hw/inky.py

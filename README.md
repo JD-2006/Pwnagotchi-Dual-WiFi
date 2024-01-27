@@ -1,8 +1,8 @@
 A project utilizing the internal wifi to connect to an access point for internet, and an external adapter for pwning.
 We can't let Flipper have all the tricks. ;) . There's lots of of options for this like running Wifite, Reaver or EvilTwin...
 
-My goal was to create a pwnagotvhi with two options for command and control. Bluetooth and WiFi since I do not use a screen.
-This is basically my setup notes with a few added comments, since I restarted from scrath so many times and I'm down with copy, paste.
+My goal was to create a pwnagotchi with two options for command and control. Bluetooth and WiFi since I do not use a screen.
+This is basically my setup notes with a few added comments, since I restarted from scratch so many times and I'm down with copy, paste.
 
 My hardware is a Pi Zero W, RTC, A rando GPS module I had laying around from a drone project, A Cable Matters WiFi adapter (Panda),
 A shutdown button scavenged from a old computer case and an extra LED. 

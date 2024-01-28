@@ -20,7 +20,10 @@ wifi-reconnect.sh -
 If your internet wifi adapter keeps disconnecting from your AP.
 $ sudo chmod +x /usr/local/bin/wifi-reconnect.sh
 
-By putting following content at end of file:
-sudo echo '* * * * * root /usr/local/bin/wifi-reconnect.sh' >> /etc/crontab
+Edit crontab to let it check WiFi connection every minute:
+sudo sh -c 'echo "* * * * * root /usr/local/bin/wifi-reconnect.sh" >> /etc/crontab'
+
+This would check every 5 minutes:
+sudo sh -c 'echo "*/5 * * * * root /usr/local/bin/wifi-reconnect.sh" >> /etc/crontab'
 
 Edited from: https://github.com/carry0987/Raspberry-Pi-Repo/blob/master/Auto-WiFi-Reconnect/wifi-reconnect.sh

@@ -22,4 +22,4 @@ $ sudo crontab -e
 By putting following content at end of file:
 * * * * * root /home/pi/wifi-reconnect.sh
 
-From: https://github.com/carry0987/Raspberry-Pi-Repo/blob/master/Auto-WiFi-Reconnect/wifi-reconnect.sh
+Edited from: https://github.com/carry0987/Raspberry-Pi-Repo/blob/master/Auto-WiFi-Reconnect/wifi-reconnect.sh

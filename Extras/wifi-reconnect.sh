@@ -18,4 +18,3 @@ else
     sudo ifup wlan1
 fi
 
-echo 'WiFi check finished'

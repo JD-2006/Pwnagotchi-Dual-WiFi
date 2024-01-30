@@ -23,9 +23,9 @@ $ sudo chmod +x /usr/local/bin/wifi-reconnect.sh
 $ sudo su
 
 Edit crontab to let it check WiFi connection every minute:
-# echo '* * * * * root /usr/local/bin/wifi-reconnect.sh' >> /etc/crontabcrontab'
+# echo '* * * * * root bash wifi-reconnect.sh' >> /etc/crontabcrontab'
 
 This would check every 5 minutes:
-# echo '*/5 * * * * root /usr/local/bin/wifi-reconnect.sh' >> /etc/crontab
+# echo '*/5 * * * * root bash wifi-reconnect.sh' >> /etc/crontabcrontab'
 
 Edited from: https://github.com/carry0987/Raspberry-Pi-Repo/blob/master/Auto-WiFi-Reconnect/wifi-reconnect.sh

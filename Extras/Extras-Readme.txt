@@ -28,4 +28,14 @@ Edit crontab to let it check WiFi connection every minute:
 This would check every 5 minutes:
 # echo '*/5 * * * * root bash wifi-reconnect.sh' >> /etc/crontabcrontab'
 
+After a an hour or so check /var/mail/mail. If you see errors like:
+/usr/local/bin/wifi-reconnect.sh: line 2: $'\r': command not found
+/usr/local/bin/wifi-reconnect.sh: line 5: $'\r': command not found
+/usr/local/bin/wifi-reconnect.sh: wifi-reconnect.sh: line 7: syntax error near unexpected token `$'{\r''
+/usr/local/bin/wifi-reconnect.sh: wifi-reconnect.sh: line 7: `log() 
+
+$ sudo apt-get install dos2unix
+
+$ sudo dos2unix /usr/local/bin/wifi-reconnect.sh
+
 Edited from: https://github.com/carry0987/Raspberry-Pi-Repo/blob/master/Auto-WiFi-Reconnect/wifi-reconnect.sh
